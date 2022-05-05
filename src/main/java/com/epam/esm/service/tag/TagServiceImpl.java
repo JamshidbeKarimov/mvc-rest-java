@@ -17,6 +17,10 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public BaseResponseDto<Tag> create(Tag tag) {
+        tag.setName(tag.getName().toLowerCase());
+        if(checkExistence(tag.getName()) != null)
+            return new BaseResponseDto<>(0, "tag with this name already exists");
+
         tag.setId(UUID.randomUUID());
         int create = tagDAO.create(tag);
 
@@ -47,4 +51,9 @@ public class TagServiceImpl implements TagService{
 
         return new BaseResponseDto(0, "cannot delete certificate");
     }
+
+    private Tag checkExistence(String name){
+        return tagDAO.getByName(name);
+    }
+
 }

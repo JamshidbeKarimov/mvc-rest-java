@@ -11,16 +11,16 @@ import java.util.List;
 public interface GiftCertificateService extends BaseService<GiftCertificateDto> {
 
     BaseResponseDto<List<GiftCertificateDto>> getAll(
-            boolean doNameSort, boolean doDateSort, boolean byTagName
+            String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending
     );
 
     BaseResponseDto update(GiftCertificateDto update);
 
-    BaseResponseDto<List<GiftCertificateDto>> getByTagName(String tagName);
-
-    BaseResponseDto<List<GiftCertificateDto>> searchByDescriptionOrName(String keyWord);
-
-    BaseResponseDto<List<GiftCertificateDto>> sortByName();
-
-    BaseResponseDto<List<GiftCertificateDto>> sortByDate();
+//    BaseResponseDto<List<GiftCertificateDto>> getByTagName(String tagName);
+//
+//    BaseResponseDto<List<GiftCertificateDto>> searchByDescriptionOrName(String keyWord);
+//
+//    BaseResponseDto<List<GiftCertificateDto>> sortByName();
+//
+//    BaseResponseDto<List<GiftCertificateDto>> sortByDate();
 }

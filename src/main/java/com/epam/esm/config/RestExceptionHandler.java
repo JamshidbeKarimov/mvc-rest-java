@@ -14,14 +14,15 @@ public class RestExceptionHandler
         extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = NullPointerException.class)
-    public ResponseEntity<?> nullPointerExceptionHandler() {
+    public ResponseEntity<?> nullPointerExceptionHandler(NullPointerException exception) {
+
         return ResponseEntity.ok(new BaseExceptionDto(0, "null pointer exception", 10500));
     }
 
     @ExceptionHandler(value = EmptyResultDataAccessException.class)
-    public ResponseEntity<?> emptyResultDataExceptionHandler(){
+    public ResponseEntity<?> emptyResultDataExceptionHandler(Exception e){
         return ResponseEntity.ok(
-                new BaseResponseDto<>(-1, "object not found")
+                new BaseResponseDto<>(-1, e.getLocalizedMessage() + e.getCause())
         );
     }
 
@@ -29,6 +30,13 @@ public class RestExceptionHandler
     public ResponseEntity<?> dataIntegrityViolationExceptionHandler(){
         return ResponseEntity.ok(
                 new BaseResponseDto<>(-1, "this action violets foreign key constraint in PostgreSQL")
+        );
+    }
+
+    @ExceptionHandler(ClassNotFoundException.class)
+    public ResponseEntity<?> classNotFoundExceptionHandler(Exception e){
+        return ResponseEntity.ok(
+                new BaseExceptionDto(500, e.getLocalizedMessage(), 10500)
         );
     }
 

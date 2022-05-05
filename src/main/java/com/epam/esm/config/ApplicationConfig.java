@@ -17,7 +17,7 @@ public class ApplicationConfig {
     private final String DRIVER = "org.postgresql.Driver";
 
     @Bean
-    public DataSource mysqlDataSource() {
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(DRIVER);
         dataSource.setUrl(URL);

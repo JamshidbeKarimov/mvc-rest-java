@@ -13,4 +13,6 @@ public interface TagDAO extends BaseDAO<Tag> {
     void createWithGiftCertificate(UUID certificateId, List<Tag> tags);
 
     List<Tag> getTags(UUID certificateId);
+
+    Tag getByName(String name);
 }
