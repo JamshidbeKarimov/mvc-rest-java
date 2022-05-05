@@ -21,10 +21,6 @@ public class GiftCertificateController {
     public ResponseEntity<?> create(
             @RequestBody GiftCertificateDto giftCertificate
             ){
-//        if(giftCertificate.getTags() != null && creating.getStatus() == 1){
-//            tagDAO.createWithGiftCertificate(giftCertificate.getId(), giftCertificate.getTags());
-//        }
-
         return ResponseEntity.ok(giftCertificateService.create(giftCertificate));
     }
 
@@ -38,12 +34,14 @@ public class GiftCertificateController {
 
     @RequestMapping(value = "/get_all", method = RequestMethod.GET)
     public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String searchWord,
+            @RequestParam(required = false) String byTagName,
             @RequestParam(required = false) boolean doNameSort,
             @RequestParam(required = false) boolean doDateSort,
-            @RequestParam(required = false) boolean byTagName
+            @RequestParam(required = false) boolean isDescending
     ){
         return ResponseEntity.ok(giftCertificateService.getAll(
-                doNameSort, doDateSort, byTagName));
+               searchWord, byTagName, doNameSort, doDateSort, isDescending));
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -58,30 +56,6 @@ public class GiftCertificateController {
             @RequestBody GiftCertificateDto update
     ){
         return ResponseEntity.ok(giftCertificateService.update(update));
-    }
-
-    @RequestMapping(value = "/tag_name", method = RequestMethod.GET)
-    public ResponseEntity<?> getByTagName(
-            @RequestParam String tagName
-    ){
-        return ResponseEntity.ok(giftCertificateService.getByTagName(tagName));
-    }
-
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public ResponseEntity<?> searchByDescriptionOrName(
-            @RequestParam String keyWord
-    ){
-        return ResponseEntity.ok(giftCertificateService.searchByDescriptionOrName(keyWord));
-    }
-
-    @RequestMapping(value = "/name_sort", method = RequestMethod.GET)
-    public ResponseEntity<?> sortByName(){
-        return ResponseEntity.ok(giftCertificateService.sortByName());
-    }
-
-    @RequestMapping(value = "/date_sort", method = RequestMethod.GET)
-    public ResponseEntity<?> sortByDate(){
-        return ResponseEntity.ok(giftCertificateService.sortByDate());
     }
 
 

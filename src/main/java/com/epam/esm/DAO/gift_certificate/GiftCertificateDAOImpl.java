@@ -58,18 +58,18 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public int delete(UUID id) {
         String QUERY_DELETE_CERTIFICATE = "delete from gift_certificate where id = ?";
-//        String QUERY_DELETE_CONNECTIONS = "delete from gift_certificate_tag where gift_certificate_id = ?";
-//        jdbcTemplate.update(QUERY_DELETE_CONNECTIONS, id);
+        String QUERY_DELETE_CONNECTIONS = "delete from gift_certificate_tag where gift_certificate_id = ?";
+        jdbcTemplate.update(QUERY_DELETE_CONNECTIONS, id);
         return jdbcTemplate.update(QUERY_DELETE_CERTIFICATE, id);
     }
 
     @Override
     public int update(GiftCertificate update) {
         String QUERY_UPDATE_CERTIFICATE = """
-                update gift_certificate 
+                update gift_certificate
                 set name = ?,
                 description = ?,
-                price = ?, 
+                price = ?,
                 duration = ?,
                 last_update_date = ?
                 where id = ?;
@@ -88,13 +88,27 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> getByTagName(String tagName) {
         String QUERY_GET_BY_TAG_NAME = """
-                select * from gift_certificate gc where gc.id in 
-                (select gt.gift_certificate_id from gift_certificate_tag gt 
-                    where gt.tag_id = 
+                select * from gift_certificate gc where gc.id in
+                (select gt.gift_certificate_id from gift_certificate_tag gt
+                    where gt.tag_id =
                         (select t.id from tag t where t.name = ?)
                 );""";
 
         return jdbcTemplate.query(QUERY_GET_BY_TAG_NAME, new GiftCertificateMapper(), tagName);
+    }
+
+    @Override
+    public List<GiftCertificate> searchAndGetByTagName(String searchWord, String tagName) {
+        String QUERY_SEARCH_AND_GET_BY_TAG_NAME = """
+                    select gc.* from gift_certificate gc
+                    inner join search_by_name(?) res on res.id = gc.id
+                               where gc.id in
+                                      (select gt.gift_certificate_id from gift_certificate_tag gt
+                                              where gt.tag_id =
+                                                    (select t.id from tag t where t.name = ?)
+                                                        );""";
+
+        return jdbcTemplate.query(QUERY_SEARCH_AND_GET_BY_TAG_NAME, new GiftCertificateMapper(), searchWord, tagName);
     }
 
     @Override

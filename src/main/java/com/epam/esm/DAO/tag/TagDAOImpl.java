@@ -2,6 +2,7 @@ package com.epam.esm.DAO.tag;
 
 import com.epam.esm.model.tag.Tag;
 import com.epam.esm.model.tag.TagMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +34,19 @@ public class TagDAOImpl implements TagDAO {
     }
 
     @Override
+    public Tag getByName(String name) {
+        String QUERY_GET_BY_NAME = "select * from tag where name = ?";
+
+        try {
+            return jdbcTemplate.queryForObject(QUERY_GET_BY_NAME, new TagMapper(), name);
+        }
+        catch (EmptyResultDataAccessException e){
+            System.out.println("no tag with name: " + name);
+        }
+        return null;
+    }
+
+    @Override
     public List<Tag> getAll() {
         String QUERY_GET_ALL = "select * from tag;";
 
@@ -52,10 +66,15 @@ public class TagDAOImpl implements TagDAO {
         String QUERY_CREATE_CONNECTION
                 = "insert into gift_certificate_tag (tag_id, gift_certificate_id) values (?, ?);";
 
-        tags.stream().forEach(tag -> {
-            tag.setId(UUID.randomUUID());
-            jdbcTemplate.update(QUERY_CREATE_TAG, tag.getId(), tag.getName());
-            jdbcTemplate.update(QUERY_CREATE_CONNECTION,tag.getId(), certificateId);
+        tags.forEach(tag -> {
+            Tag byName = getByName(tag.getName());
+            if(byName != null){
+                jdbcTemplate.update(QUERY_CREATE_CONNECTION,byName.getId(), certificateId);
+            }else {
+                tag.setId(UUID.randomUUID());
+                jdbcTemplate.update(QUERY_CREATE_TAG, tag.getId(), tag.getName());
+                jdbcTemplate.update(QUERY_CREATE_CONNECTION, tag.getId(), certificateId);
+            }
         });
     }
 
@@ -63,7 +82,8 @@ public class TagDAOImpl implements TagDAO {
     public List<Tag> getTags(UUID certificateId) {
         String QUERY_GET_TAGS = "select *from get_certificate_tags(?);";
 
-        List<Tag> tagList = jdbcTemplate.query(QUERY_GET_TAGS, new TagMapper(), certificateId);
-        return tagList;
+        return jdbcTemplate.query(QUERY_GET_TAGS, new TagMapper(), certificateId);
     }
+
+
 }

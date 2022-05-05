@@ -19,6 +19,8 @@ public interface GiftCertificateDAO extends BaseDAO<GiftCertificate> {
 
     List<GiftCertificate> getByTagName(String tagName);
 
+    List<GiftCertificate> searchAndGetByTagName(String searchWord, String tagName);
+
     List<GiftCertificate> search(String keyWord);
 
 
