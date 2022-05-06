@@ -11,18 +11,13 @@ import javax.sql.DataSource;
 @Configuration
 public class ApplicationConfig {
 
-    private final String URL = "jdbc:postgresql://localhost:5432/gift_certificates";
-    private final String USER = "postgres";
-    private final String PASSWORD = "8463";
-    private final String DRIVER = "org.postgresql.Driver";
-
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(DRIVER);
-        dataSource.setUrl(URL);
-        dataSource.setUsername(USER);
-        dataSource.setPassword(PASSWORD);
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/gift_certificates");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("8463");
 
         return dataSource;
     }
@@ -33,5 +28,4 @@ public class ApplicationConfig {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
-
 }

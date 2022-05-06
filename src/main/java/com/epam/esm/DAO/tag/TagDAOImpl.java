@@ -2,6 +2,7 @@ package com.epam.esm.DAO.tag;
 
 import com.epam.esm.model.tag.Tag;
 import com.epam.esm.model.tag.TagMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,8 @@ public class TagDAOImpl implements TagDAO {
 
     private JdbcTemplate jdbcTemplate;
 
-    public TagDAOImpl(DataSource dataSource) {
+    @Autowired
+    public void setJdbcTemplate(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 

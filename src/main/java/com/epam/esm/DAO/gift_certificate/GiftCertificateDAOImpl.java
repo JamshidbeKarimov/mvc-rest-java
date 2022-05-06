@@ -1,38 +1,29 @@
 package com.epam.esm.DAO.gift_certificate;
 
-import com.epam.esm.DTO.GiftCertificateDto;
-import com.epam.esm.DTO.response.BaseResponseDto;
 import com.epam.esm.model.gift_certificate.GiftCertificate;
 import com.epam.esm.model.gift_certificate.GiftCertificateMapper;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public GiftCertificateDAOImpl(DataSource dataSource, ModelMapper modelMapper) {
+    public GiftCertificateDAOImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
 
     @Override
     public int create(GiftCertificate certificate) {
-        String QUERY_CREATE_CERTIFICATE = "insert into gift_certificate(id, name, description, price, duration," +
-                "create_date, last_update_date) values(?, ?, ?, ?, ?, ?, ?);";
+        String QUERY_CREATE_CERTIFICATE = """
+                insert into gift_certificate(id, name, description, price, duration, create_date, last_update_date)
+                            values(?, ?, ?, ?, ?, ?, ?);""";
 
         return jdbcTemplate.update(QUERY_CREATE_CERTIFICATE,
                 certificate.getId(), certificate.getName(), certificate.getDescription(), certificate.getPrice(),
@@ -102,11 +93,8 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         String QUERY_SEARCH_AND_GET_BY_TAG_NAME = """
                     select gc.* from gift_certificate gc
                     inner join search_by_name(?) res on res.id = gc.id
-                               where gc.id in
-                                      (select gt.gift_certificate_id from gift_certificate_tag gt
-                                              where gt.tag_id =
-                                                    (select t.id from tag t where t.name = ?)
-                                                        );""";
+                    where gc.id in (select gt.gift_certificate_id from gift_certificate_tag gt
+                    where gt.tag_id = (select t.id from tag t where t.name = ?));""";
 
         return jdbcTemplate.query(QUERY_SEARCH_AND_GET_BY_TAG_NAME, new GiftCertificateMapper(), searchWord, tagName);
     }

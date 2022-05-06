@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.DAO.tag.TagDAO;
 import com.epam.esm.DTO.GiftCertificateDto;
 import com.epam.esm.service.gift_certificate.GiftCertificateService;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.UUID;
 public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
-    private final TagDAO tagDAO;
+
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<?> create(
@@ -28,8 +27,7 @@ public class GiftCertificateController {
     public ResponseEntity<?> get(
             @RequestParam UUID id
     ){
-        return ResponseEntity.ok(
-                giftCertificateService.get(id));
+        return ResponseEntity.ok(giftCertificateService.get(id));
     }
 
     @RequestMapping(value = "/get_all", method = RequestMethod.GET)
@@ -41,7 +39,8 @@ public class GiftCertificateController {
             @RequestParam(required = false) boolean isDescending
     ){
         return ResponseEntity.ok(giftCertificateService.getAll(
-               searchWord, byTagName, doNameSort, doDateSort, isDescending));
+               searchWord, byTagName, doNameSort, doDateSort, isDescending
+            ));
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -57,14 +56,5 @@ public class GiftCertificateController {
     ){
         return ResponseEntity.ok(giftCertificateService.update(update));
     }
-
-
-
-
-
-
-
-    
-
 
 }
