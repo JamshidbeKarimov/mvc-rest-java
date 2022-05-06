@@ -10,26 +10,27 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class RestExceptionHandler
-        extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = NullPointerException.class)
-    public ResponseEntity<?> nullPointerExceptionHandler(NullPointerException exception) {
+    public ResponseEntity<?> nullPointerExceptionHandler(Exception e) {
 
-        return ResponseEntity.ok(new BaseExceptionDto(0, "null pointer exception", 10500));
+        return ResponseEntity.ok(
+                new BaseExceptionDto(0, e.getLocalizedMessage(), 10500)
+        );
     }
 
     @ExceptionHandler(value = EmptyResultDataAccessException.class)
     public ResponseEntity<?> emptyResultDataExceptionHandler(Exception e){
         return ResponseEntity.ok(
-                new BaseResponseDto<>(-1, e.getLocalizedMessage() + e.getCause())
+                new BaseResponseDto<>(-1, e.getLocalizedMessage())
         );
     }
 
     @ExceptionHandler(value = DataIntegrityViolationException.class)
-    public ResponseEntity<?> dataIntegrityViolationExceptionHandler(){
+    public ResponseEntity<?> dataIntegrityViolationExceptionHandler(Exception e){
         return ResponseEntity.ok(
-                new BaseResponseDto<>(-1, "this action violets foreign key constraint in PostgreSQL")
+                new BaseResponseDto<>(-1, e.getLocalizedMessage())
         );
     }
 
@@ -39,11 +40,4 @@ public class RestExceptionHandler
                 new BaseExceptionDto(500, e.getLocalizedMessage(), 10500)
         );
     }
-
-
-
-//    @ExceptionHandler(value = HttpClientErrorException.BadRequest.class)
-//    public ResponseEntity<?> badRequestErrorHandler(){
-//        return new ResponseEntity<>(new BaseExceptionDto(404, "page not found", 01404), HttpStatus.BAD_REQUEST);
-//    }
 }

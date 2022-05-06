@@ -4,16 +4,22 @@ import com.epam.esm.DAO.tag.TagDAO;
 import com.epam.esm.DTO.response.BaseResponseDto;
 import com.epam.esm.model.tag.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 public class TagServiceImpl implements TagService{
 
-    private final TagDAO tagDAO;
+    private TagDAO tagDAO;
+
+    @Autowired
+    public void setTagDAO(TagDAO tagDAO) {
+        this.tagDAO = tagDAO;
+    }
 
     @Override
     public BaseResponseDto<Tag> create(Tag tag) {
