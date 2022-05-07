@@ -1,8 +1,10 @@
 package com.epam.esm.DAO.gift_certificate;
 
+import com.epam.esm.exception.BaseException;
 import com.epam.esm.model.gift_certificate.GiftCertificate;
 import com.epam.esm.model.gift_certificate.GiftCertificateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -33,10 +35,15 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     public GiftCertificate get(UUID id) {
         String QUERY_GET_CERTIFICATE = "select * from gift_certificate where id = ?;";
 
+        try{
         return jdbcTemplate.queryForObject(
                 QUERY_GET_CERTIFICATE,
                 new GiftCertificateMapper(), id
         );
+        }catch (EmptyResultDataAccessException e){
+            e.printStackTrace();
+            throw new BaseException(10100, "no data  with id" + id);
+        }
     }
 
     @Override

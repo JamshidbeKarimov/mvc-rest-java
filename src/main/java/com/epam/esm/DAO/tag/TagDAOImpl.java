@@ -1,5 +1,6 @@
 package com.epam.esm.DAO.tag;
 
+import com.epam.esm.exception.BaseException;
 import com.epam.esm.model.tag.Tag;
 import com.epam.esm.model.tag.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,12 @@ public class TagDAOImpl implements TagDAO {
     @Override
     public Tag get(UUID tagId) {
         String QUERY_GET_TAG = "select * from tag where id = ?;";
-
-        return jdbcTemplate.queryForObject(QUERY_GET_TAG, new TagMapper(), tagId);
+        try{
+            return jdbcTemplate.queryForObject(QUERY_GET_TAG, new TagMapper(), tagId);
+        }catch (EmptyResultDataAccessException e){
+            e.printStackTrace();
+            throw new BaseException(10100, "no data found with id: " + tagId);
+        }
     }
 
     @Override

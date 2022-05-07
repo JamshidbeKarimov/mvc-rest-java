@@ -2,6 +2,7 @@ package com.epam.esm.config;
 
 import com.epam.esm.DTO.response.BaseExceptionDto;
 import com.epam.esm.DTO.response.BaseResponseDto;
+import com.epam.esm.exception.BaseException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -14,31 +15,38 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     //use logging for seeing exception || use custom exception
-    @ExceptionHandler(value = NullPointerException.class)
-    public ResponseEntity<?> nullPointerExceptionHandler(Exception e) {
-        return ResponseEntity.ok(
-                new BaseExceptionDto(0, e.getLocalizedMessage(), 10500)
-        );
-    }
-
-    @ExceptionHandler(value = EmptyResultDataAccessException.class)
-    public ResponseEntity<?> emptyResultDataExceptionHandler(Exception e){
-        return ResponseEntity.ok(
-                new BaseResponseDto<>(-1, e.getLocalizedMessage())
-        );
-    }
-
-    @ExceptionHandler(value = DataIntegrityViolationException.class)
-    public ResponseEntity<?> dataIntegrityViolationExceptionHandler(Exception e){
-        return ResponseEntity.ok(
-                new BaseResponseDto<>(-1, e.getLocalizedMessage())
-        );
-    }
-
+//    @ExceptionHandler(value = NullPointerException.class)
+//    public ResponseEntity<?> nullPointerExceptionHandler(Exception e) {
+//        return ResponseEntity.ok(
+//                new BaseExceptionDto(0, e.getLocalizedMessage(), 10500)
+//        );
+//    }
+//
+//    @ExceptionHandler(value = EmptyResultDataAccessException.class)
+//    public ResponseEntity<?> emptyResultDataExceptionHandler(Exception e){
+//        return ResponseEntity.ok(
+//                new BaseResponseDto<>(-1, e.getLocalizedMessage())
+//        );
+//    }
+//
+//    @ExceptionHandler(value = DataIntegrityViolationException.class)
+//    public ResponseEntity<?> dataIntegrityViolationExceptionHandler(Exception e){
+//        return ResponseEntity.ok(
+//                new BaseResponseDto<>(-1, e.getLocalizedMessage())
+//        );
+//    }
+//
     @ExceptionHandler(ClassNotFoundException.class)
     public ResponseEntity<?> classNotFoundExceptionHandler(Exception e){
         return ResponseEntity.ok(
                 new BaseExceptionDto(500, e.getLocalizedMessage(), 10500)
+        );
+    }
+
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<?> exceptionHandler(BaseException e){
+        return ResponseEntity.ok(
+                new BaseExceptionDto(0, e.getMessage(), e.getStatus())
         );
     }
 }

@@ -1,6 +1,8 @@
 package com.epam.esm.model.gift_certificate;
 
 
+import com.epam.esm.exception.BaseException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -12,6 +14,7 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
 
         GiftCertificate giftCertificate = new GiftCertificate();
+
         giftCertificate.setId(UUID.fromString(rs.getString("id")));
         giftCertificate.setName(rs.getString("name"));
         giftCertificate.setDescription(rs.getString("description"));
@@ -21,5 +24,6 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
         giftCertificate.setLastUpdateDate(rs.getString("last_update_date"));
 
         return giftCertificate;
+
     }
 }
