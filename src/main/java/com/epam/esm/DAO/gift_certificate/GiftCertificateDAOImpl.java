@@ -18,7 +18,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
     @Override
     public int create(GiftCertificate certificate) {
         String QUERY_CREATE_CERTIFICATE = """
@@ -27,7 +26,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
         return jdbcTemplate.update(QUERY_CREATE_CERTIFICATE,
                 certificate.getId(), certificate.getName(), certificate.getDescription(), certificate.getPrice(),
-                certificate.getDuration(), certificate.getCreateDate(),certificate.getCreateDate());
+                certificate.getDuration(), certificate.getCreateDate(), certificate.getCreateDate());
     }
 
     @Override
@@ -76,32 +75,37 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                 update.getId());
     }
 
-    @Override
-    public List<GiftCertificate> getByTagName(String tagName) {
-        String QUERY_GET_BY_TAG_NAME = """
-                select * from gift_certificate gc where gc.id in
-                (select gt.gift_certificate_id from gift_certificate_tag gt
-                    where gt.tag_id =
-                        (select t.id from tag t where t.name = ?)
-                );""";
 
-        return jdbcTemplate.query(QUERY_GET_BY_TAG_NAME, new GiftCertificateMapper(), tagName);
-    }
 
     @Override
-    public List<GiftCertificate> searchAndGetByTagName(String searchWord, String tagName) {
-        String QUERY_SEARCH_AND_GET_BY_TAG_NAME = """
-                    select gc.* from gift_certificate gc
-                    inner join search_by_name(?) res on res.id = gc.id
-                    where gc.id in (select gt.gift_certificate_id from gift_certificate_tag gt
-                    where gt.tag_id = (select t.id from tag t where t.name = ?));""";
+    public List<GiftCertificate> searchAndGetByTagName(
+            String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending)
+    {
+        String QUERY_SEARCH_AND_GET_BY_TAG_NAME = getAllQuery(doNameSort, doDateSort, isDescending);
 
         return jdbcTemplate.query(QUERY_SEARCH_AND_GET_BY_TAG_NAME, new GiftCertificateMapper(), searchWord, tagName);
     }
 
-    @Override
-    public List<GiftCertificate> search(String keyWord) {
-        String QUERY_SEARCH = "select * from search_by_name(?);";
-        return jdbcTemplate.query(QUERY_SEARCH, new GiftCertificateMapper(), keyWord);
+
+
+    private String getAllQuery(
+            boolean doNameSort, boolean doDateSort, boolean isDescending
+    ) {
+        if (doNameSort) {
+            if (doDateSort) {
+                if (isDescending)
+                    return "select *from get_certificates(?, ?) order by name, create_date desc;";
+                return "select *from get_certificates(?, ?) order by name, create_date;";
+            }
+            if (isDescending)
+                return "select *from get_certificates(?, ?) order by name desc;";
+
+            return "select *from get_certificates(?, ?) order by name;";
+        } else if (doDateSort) {
+            if (isDescending)
+                return "select *from get_certificates(?, ?) order by create_date desc;";
+            return "select *from get_certificates(?, ?) order by create_date;";
+        }
+        return "select *from get_certificates(?, ?)";
     }
 }

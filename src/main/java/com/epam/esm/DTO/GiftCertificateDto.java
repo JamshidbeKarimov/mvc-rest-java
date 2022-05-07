@@ -28,6 +28,8 @@ public class GiftCertificateDto {
     private String description;
     private Double price;
     private Integer duration;
+
+    // use LocalDateTime
     private String createDate;
     private String lastUpdateDate;
     private List<Tag> tags;

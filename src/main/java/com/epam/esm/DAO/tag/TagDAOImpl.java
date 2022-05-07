@@ -62,6 +62,7 @@ public class TagDAOImpl implements TagDAO {
         return jdbcTemplate.update(QUERY_DELETE_TAG, tagId);
     }
 
+    //should be in gift certificate service
     @Override
     public void createWithGiftCertificate(UUID certificateId, List<Tag> tags) {
         String QUERY_CREATE_TAG = "insert into tag (id, name) values(?, ?);";

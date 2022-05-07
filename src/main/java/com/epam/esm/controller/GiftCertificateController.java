@@ -15,7 +15,6 @@ public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
 
-
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<?> create(
             @RequestBody GiftCertificateDto giftCertificate
@@ -50,6 +49,7 @@ public class GiftCertificateController {
         return ResponseEntity.ok(giftCertificateService.delete(id));
     }
 
+    // see put vs patch
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public ResponseEntity<?> update(
             @RequestBody GiftCertificateDto update

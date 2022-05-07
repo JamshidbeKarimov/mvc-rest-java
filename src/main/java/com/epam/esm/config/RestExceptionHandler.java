@@ -12,9 +12,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+
+    //use logging for seeing exception || use custom exception
     @ExceptionHandler(value = NullPointerException.class)
     public ResponseEntity<?> nullPointerExceptionHandler(Exception e) {
-
         return ResponseEntity.ok(
                 new BaseExceptionDto(0, e.getLocalizedMessage(), 10500)
         );

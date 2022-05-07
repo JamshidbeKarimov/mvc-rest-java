@@ -11,15 +11,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-//@AllArgsConstructor
+@AllArgsConstructor
 public class TagServiceImpl implements TagService{
 
-    private TagDAO tagDAO;
-
-    @Autowired
-    public void setTagDAO(TagDAO tagDAO) {
-        this.tagDAO = tagDAO;
-    }
+    private final TagDAO tagDAO;
 
     @Override
     public BaseResponseDto<Tag> create(Tag tag) {
@@ -29,17 +24,14 @@ public class TagServiceImpl implements TagService{
 
         tag.setId(UUID.randomUUID());
         int create = tagDAO.create(tag);
-
         if(create == 1 )
             return new BaseResponseDto<>(1, "success");
-
         return new BaseResponseDto<>(0, "failed to create gift certificate");
     }
 
     @Override
     public BaseResponseDto<Tag> get(UUID tagId) {
         Tag tag = tagDAO.get(tagId);
-
         return new BaseResponseDto<>(1, "success", tag);
     }
 
@@ -51,10 +43,8 @@ public class TagServiceImpl implements TagService{
     @Override
     public BaseResponseDto delete(UUID tagId) {
         int delete = tagDAO.delete(tagId);
-
         if(delete == 1)
             return new BaseResponseDto(1, "certificate deleted");
-
         return new BaseResponseDto(0, "cannot delete certificate");
     }
 

@@ -10,15 +10,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +38,7 @@ class TagServiceTest {
         tag = new Tag(UUID.randomUUID(), "testTag");
     }
 
+    // return value
     @Test
     public void canCreateTag(){
         given(tagDAO.create(tag)).willReturn(1);
@@ -68,12 +70,19 @@ class TagServiceTest {
         list.add(tag2);
         list.add(tag3);
 
-        Mockito.when(tagDAO.getAll()).thenReturn(list);
+        given(tagDAO.getAll()).willReturn(list);
 
         BaseResponseDto<List<Tag>> all = tagService.getAll();
         assertEquals(3, all.getData().size());
         Mockito.verify(tagDAO, Mockito.times(1)).getAll();
     }
 
+    @Test
+    public void canDeleteTag(){
+        given(tagDAO.delete(tag.getId())).willReturn(1);
 
+        BaseResponseDto deleteResponse = tagService.delete(tag.getId());
+
+        assertEquals(1 ,deleteResponse.getStatus());
+    }
 }
