@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.InstanceOf;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Stubber;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -28,8 +29,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceTest {
@@ -127,9 +127,8 @@ class GiftCertificateServiceTest {
 //        given(giftCertificateDAO.searchAndGetByTagName(
 //                "test", "test", true, true, true
 //        )).willReturn(giftCertificates);
-//        given(giftCertificateService.convertToDto(giftCertificates)).willReturn(giftCertificateDtoList);
-//        given(giftCertificateService.addTags(giftCertificateDtoList)).willReturn(giftCertificateDtoList);
-//        when(modelMapper.map(giftCertificates.get(0), GiftCertificateDto.class));
+//        lenient().when(giftCertificateService.convertToDto(giftCertificates)).thenReturn(giftCertificateDtoList);
+//        lenient().when(giftCertificateService.addTags(giftCertificateDtoList)).thenReturn(giftCertificateDtoList);
 //
 //
 //        BaseResponseDto<List<GiftCertificateDto>> all = giftCertificateService.getAll(
