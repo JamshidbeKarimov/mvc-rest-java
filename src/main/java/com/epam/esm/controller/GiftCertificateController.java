@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.DTO.GiftCertificateDto;
+import com.epam.esm.DTO.response.BaseResponseDto;
 import com.epam.esm.service.gift_certificate.GiftCertificateService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,11 @@ public class GiftCertificateController {
     public ResponseEntity<?> create(
             @RequestBody GiftCertificateDto giftCertificate
             ){
-        return ResponseEntity.ok(giftCertificateService.create(giftCertificate));
+        return ResponseEntity.status(201).body(giftCertificateService.create(giftCertificate));
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @ResponseBody
     public ResponseEntity<?> get(
             @RequestParam UUID id
     ){
@@ -49,12 +51,12 @@ public class GiftCertificateController {
         return ResponseEntity.ok(giftCertificateService.delete(id));
     }
 
-    // see put vs patch
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public ResponseEntity<?> update(
-            @RequestBody GiftCertificateDto update
+            @RequestBody GiftCertificateDto update,
+            @RequestParam UUID id
     ){
-        return ResponseEntity.ok(giftCertificateService.update(update));
+        return ResponseEntity.ok(giftCertificateService.update(update, id));
     }
 
 }

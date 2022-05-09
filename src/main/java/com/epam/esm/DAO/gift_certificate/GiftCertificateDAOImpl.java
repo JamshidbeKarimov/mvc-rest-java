@@ -1,48 +1,46 @@
 package com.epam.esm.DAO.gift_certificate;
 
-import com.epam.esm.exception.BaseException;
+import com.epam.esm.exception.NoDataFoundException;
+import com.epam.esm.exception.UnknownDataBaseException;
 import com.epam.esm.model.gift_certificate.GiftCertificate;
 import com.epam.esm.model.gift_certificate.GiftCertificateMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Repository
+@AllArgsConstructor
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public GiftCertificateDAOImpl(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
     @Override
-    public int create(GiftCertificate certificate) {
+    public GiftCertificate create(GiftCertificate certificate) {
         String QUERY_CREATE_CERTIFICATE = """
                 insert into gift_certificate(id, name, description, price, duration, create_date, last_update_date)
                             values(?, ?, ?, ?, ?, ?, ?);""";
 
-        return jdbcTemplate.update(QUERY_CREATE_CERTIFICATE,
+        jdbcTemplate.update(QUERY_CREATE_CERTIFICATE,
                 certificate.getId(), certificate.getName(), certificate.getDescription(), certificate.getPrice(),
-                certificate.getDuration(), certificate.getCreateDate(), certificate.getCreateDate());
+                certificate.getDuration(), certificate.getCreateDate(), certificate.getLastUpdateDate());
+        return certificate;
     }
 
     @Override
     public GiftCertificate get(UUID id) {
         String QUERY_GET_CERTIFICATE = "select * from gift_certificate where id = ?;";
-
-        try{
-        return jdbcTemplate.queryForObject(
-                QUERY_GET_CERTIFICATE,
-                new GiftCertificateMapper(), id
-        );
-        }catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
-            throw new BaseException(10100, "no data  with id" + id);
+        try {
+            return jdbcTemplate.queryForObject(
+                    QUERY_GET_CERTIFICATE,
+                    new GiftCertificateMapper(), id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoDataFoundException("no certificate found with id: " + id);
         }
     }
 
@@ -53,6 +51,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
+    @Transactional
     public int delete(UUID id) {
         String QUERY_DELETE_CERTIFICATE = "delete from gift_certificate where id = ?";
         String QUERY_DELETE_CONNECTIONS = "delete from gift_certificate_tag where gift_certificate_id = ?";
@@ -61,7 +60,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public int update(GiftCertificate update) {
+    public GiftCertificate update(GiftCertificate update) {
         String QUERY_UPDATE_CERTIFICATE = """
                 update gift_certificate
                 set name = ?,
@@ -71,8 +70,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                 last_update_date = ?
                 where id = ?;
                 """;
-
-        return jdbcTemplate.update(
+        int updateResult = jdbcTemplate.update(
                 QUERY_UPDATE_CERTIFICATE,
                 update.getName(),
                 update.getDescription(),
@@ -80,19 +78,27 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                 update.getDuration(),
                 update.getLastUpdateDate(),
                 update.getId());
+        if(updateResult == 1)
+            return update;
+        throw new UnknownDataBaseException("cannot update certificate");
     }
-
 
 
     @Override
     public List<GiftCertificate> searchAndGetByTagName(
-            String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending)
-    {
+            String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending
+    ) {
         String QUERY_SEARCH_AND_GET_BY_TAG_NAME = getAllQuery(doNameSort, doDateSort, isDescending);
-
-        return jdbcTemplate.query(QUERY_SEARCH_AND_GET_BY_TAG_NAME, new GiftCertificateMapper(), searchWord, tagName);
+        try {
+            return jdbcTemplate.query(
+                    QUERY_SEARCH_AND_GET_BY_TAG_NAME,
+                    new GiftCertificateMapper(),
+                    searchWord,
+                    tagName);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoDataFoundException("no matching gift certificate found");
+        }
     }
-
 
 
     private String getAllQuery(

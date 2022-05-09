@@ -6,6 +6,7 @@ import com.epam.esm.service.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface GiftCertificateService extends BaseService<GiftCertificateDto> {
@@ -14,7 +15,7 @@ public interface GiftCertificateService extends BaseService<GiftCertificateDto> 
             String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending
     );
 
-    BaseResponseDto update(GiftCertificateDto update);
+    BaseResponseDto update(GiftCertificateDto update, UUID certificateId);
 
 //    BaseResponseDto<List<GiftCertificateDto>> getByTagName(String tagName);
 //

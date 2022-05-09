@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface GiftCertificateDAO extends BaseDAO<GiftCertificate> {
 
-    int update(GiftCertificate updateCertificate);
+    GiftCertificate update(GiftCertificate updateCertificate);
 
     List<GiftCertificate> searchAndGetByTagName(
             String searchWord, String tagName, boolean doNameSort, boolean doDateSort, boolean isDescending);
