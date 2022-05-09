@@ -1,7 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.DAO.tag.TagDAO;
-import com.epam.esm.DTO.response.BaseResponseDto;
 import com.epam.esm.model.tag.Tag;
 import com.epam.esm.service.tag.TagService;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,7 @@ public class TagController {
     public ResponseEntity<?> create(
             @RequestBody Tag tag
     ){
-        return ResponseEntity.ok(tagService.create(tag));
+        return ResponseEntity.status(201).body(tagService.create(tag));
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)

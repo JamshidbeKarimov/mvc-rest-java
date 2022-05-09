@@ -26,6 +26,12 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:5.3.18" />
           <element id="library" level="project" name="Maven: org.springframework:spring-tx:5.3.18" />
           <element id="library" level="project" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.62" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.4.1" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-test:5.3.18" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.4.1" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.4.0" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context:5.3.18" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="mvc-rest-java/web/Web" />

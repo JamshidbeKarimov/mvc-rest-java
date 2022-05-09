@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface BaseDAO<T> {
 
-    int create(T t);
+    T create(T t);
 
     T get(UUID id);
 

@@ -20,6 +20,8 @@ import org.modelmapper.config.Configuration;
 import org.modelmapper.internal.InheritingConfiguration;
 import org.springframework.test.context.event.annotation.PrepareTestInstance;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,10 +55,10 @@ class GiftCertificateServiceTest {
                 UUID.randomUUID(),
                 "testCertificate",
                 "this is for testing",
-                10000d,
+                new BigDecimal("12000"),
                 5,
-                ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT ),
-                ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT )
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
         giftCertificateDto = new GiftCertificateDto(
@@ -74,13 +76,11 @@ class GiftCertificateServiceTest {
 
     @Test
     public void canCreateGiftCertificate(){
-        given(giftCertificateDAO.create(giftCertificate)).willReturn(1);
+        given(giftCertificateDAO.create(giftCertificate)).willReturn(giftCertificate);
         given(modelMapper.map(giftCertificateDto, GiftCertificate.class))
                 .willReturn(giftCertificate);
-
         BaseResponseDto<GiftCertificateDto> response
                 = giftCertificateService.create(giftCertificateDto);
-
         assertEquals(1, response.getStatus());
     }
 
@@ -109,34 +109,14 @@ class GiftCertificateServiceTest {
     @Test
     public void canUpdateGiftCertificate(){
         given(giftCertificateDAO.get(giftCertificate.getId())).willReturn(giftCertificate);
-        given(giftCertificateDAO.update(giftCertificate)).willReturn(1);
+        given(giftCertificateDAO.update(giftCertificate)).willReturn(giftCertificate);
         given(modelMapper.getConfiguration()).willReturn(new InheritingConfiguration());
         doNothing().when(modelMapper).map(giftCertificateDto, giftCertificate);
 
-        BaseResponseDto update1 = giftCertificateService.update(giftCertificateDto);
+        BaseResponseDto update1 = giftCertificateService.update(giftCertificateDto, giftCertificateDto.getId());
 
         assertEquals(1, update1.getStatus());
     }
-
-
-//    @Test
-//    public void cenGetAllGiftCertificates(){
-//        List<GiftCertificate> giftCertificates = getGiftCertificateList();
-//        List<GiftCertificateDto> giftCertificateDtoList = getGiftCertificateDtoList();
-//
-//        given(giftCertificateDAO.searchAndGetByTagName(
-//                "test", "test", true, true, true
-//        )).willReturn(giftCertificates);
-//        lenient().when(giftCertificateService.convertToDto(giftCertificates)).thenReturn(giftCertificateDtoList);
-//        lenient().when(giftCertificateService.addTags(giftCertificateDtoList)).thenReturn(giftCertificateDtoList);
-//
-//
-//        BaseResponseDto<List<GiftCertificateDto>> all = giftCertificateService.getAll(
-//                "test", "test", true, true, true
-//        );
-//
-//        assertEquals(3, all.getData().size());
-//    }
 
     private List<GiftCertificate> getGiftCertificateList(){
         List<GiftCertificate> giftCertificates = new ArrayList<>();

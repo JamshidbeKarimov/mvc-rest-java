@@ -10,8 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +38,7 @@ class TagServiceTest {
     // return value
     @Test
     public void canCreateTag(){
-        given(tagDAO.create(tag)).willReturn(1);
+        given(tagDAO.create(tag)).willReturn(tag);
 
         BaseResponseDto<Tag> tagBaseResponseDto = tagService.create(tag);
 

@@ -1,32 +1,33 @@
 package com.epam.esm.DAO.tag;
 
-import com.epam.esm.exception.BaseException;
+import com.epam.esm.exception.NoDataFoundException;
+import com.epam.esm.exception.tag.TagAlreadyExistException;
 import com.epam.esm.model.tag.Tag;
 import com.epam.esm.model.tag.TagMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
+@AllArgsConstructor
 public class TagDAOImpl implements TagDAO {
 
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public void setJdbcTemplate(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public int create(Tag tag) {
+    public Tag create(Tag tag) {
         String QUERY_CREATE_TAG = "insert into tag (id, name) values(?, ?);";
-
-        return jdbcTemplate.update(QUERY_CREATE_TAG, tag.getId(), tag.getName());
+        try{
+            jdbcTemplate.update(QUERY_CREATE_TAG, tag.getId(), tag.getName());
+            return tag;
+        }catch (DataIntegrityViolationException e){
+            throw new TagAlreadyExistException("tag with name \"" + tag.getName() + "\" already exists");
+        }
     }
 
     @Override
@@ -35,39 +36,33 @@ public class TagDAOImpl implements TagDAO {
         try{
             return jdbcTemplate.queryForObject(QUERY_GET_TAG, new TagMapper(), tagId);
         }catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
-            throw new BaseException(10100, "no data found with id: " + tagId);
+            throw new NoDataFoundException("no tag found with id: " + tagId);
         }
     }
 
     @Override
     public Tag getByName(String name) {
         String QUERY_GET_BY_NAME = "select * from tag where name = ?";
-
         try {
             return jdbcTemplate.queryForObject(QUERY_GET_BY_NAME, new TagMapper(), name);
         }
         catch (EmptyResultDataAccessException e){
-            System.out.println("no tag with name: " + name);
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Tag> getAll() {
         String QUERY_GET_ALL = "select * from tag;";
-
         return jdbcTemplate.query(QUERY_GET_ALL, new TagMapper());
     }
 
     @Override
     public int delete(UUID tagId) {
         String QUERY_DELETE_TAG = "delete from tag where id = ?;";
-
         return jdbcTemplate.update(QUERY_DELETE_TAG, tagId);
     }
 
-    //should be in gift certificate service
     @Override
     public void createWithGiftCertificate(UUID certificateId, List<Tag> tags) {
         String QUERY_CREATE_TAG = "insert into tag (id, name) values(?, ?);";
@@ -76,13 +71,12 @@ public class TagDAOImpl implements TagDAO {
 
         tags.forEach(tag -> {
             Tag byName = getByName(tag.getName());
-            if(byName != null){
-                jdbcTemplate.update(QUERY_CREATE_CONNECTION,byName.getId(), certificateId);
-            }else {
+            if(byName == null){
                 tag.setId(UUID.randomUUID());
                 jdbcTemplate.update(QUERY_CREATE_TAG, tag.getId(), tag.getName());
-                jdbcTemplate.update(QUERY_CREATE_CONNECTION, tag.getId(), certificateId);
-            }
+            } else
+                tag.setId(byName.getId());
+            jdbcTemplate.update(QUERY_CREATE_CONNECTION, tag.getId(), certificateId);
         });
     }
 
