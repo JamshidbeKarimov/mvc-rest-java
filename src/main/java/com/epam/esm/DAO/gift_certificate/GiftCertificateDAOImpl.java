@@ -60,7 +60,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public GiftCertificate update(GiftCertificate update) {
+    public GiftCertificate update(GiftCertificate update, UUID certificateId) {
         String QUERY_UPDATE_CERTIFICATE = """
                 update gift_certificate
                 set name = ?,
@@ -77,7 +77,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                 update.getPrice(),
                 update.getDuration(),
                 update.getLastUpdateDate(),
-                update.getId());
+                certificateId);
         if(updateResult == 1)
             return update;
         throw new UnknownDataBaseException("cannot update certificate");

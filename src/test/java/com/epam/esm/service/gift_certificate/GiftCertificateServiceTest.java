@@ -109,7 +109,7 @@ class GiftCertificateServiceTest {
     @Test
     public void canUpdateGiftCertificate(){
         given(giftCertificateDAO.get(giftCertificate.getId())).willReturn(giftCertificate);
-        given(giftCertificateDAO.update(giftCertificate)).willReturn(giftCertificate);
+        given(giftCertificateDAO.update(giftCertificate, giftCertificate.getId())).willReturn(giftCertificate);
         given(modelMapper.getConfiguration()).willReturn(new InheritingConfiguration());
         doNothing().when(modelMapper).map(giftCertificateDto, giftCertificate);
 

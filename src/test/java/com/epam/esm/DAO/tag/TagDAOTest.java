@@ -57,20 +57,16 @@ class TagDAOTest {
     }
 
     private void createTestObjects() {
-        jdbcTemplate.update("""
-                """);
-
         jdbcTemplate.update(
                 """
                         create table tag
-                        (
-                            id uuid not null primary key,
-                            name varchar
-                        );
-                        insert into tag values('64eeb184-972c-4bef-9879-c003d7352bd0', 'testTag');
-                        insert into tag values('badc0e82-f873-491a-b2cc-5ba6580ac71f', 'testTag2');
-                        insert into tag values('c57e4db1-6ae4-4aee-b0d1-aaee00c26f77', 'testTag3');
-                        insert into tag values('fce5b289-6029-44cf-a870-5a0c30fd6d83', 'testTag4');""");
+                         (
+                             id uuid not null primary key,
+                             name varchar
+                         );
+                         insert into tag values('64eeb184-972c-4bef-9879-c003d7352bd0', 'testTag');
+                         insert into tag values('badc0e82-f873-491a-b2cc-5ba6580ac71f', 'testTag2');
+                         insert into tag values('c57e4db1-6ae4-4aee-b0d1-aaee00c26f77', 'testTag3');
+                         insert into tag values('fce5b289-6029-44cf-a870-5a0c30fd6d83', 'testTag4');""");
     }
-
 }

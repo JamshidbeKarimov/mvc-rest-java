@@ -30,13 +30,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public BaseResponseDto<GiftCertificateDto> create(GiftCertificateDto giftCertificateDto) {
-        if(isNotValid(giftCertificateDto))
-            throw  new InvalidCertificateException(
-                    "duration should be greater than 0 and price should not be less than 0"
-            );
+        isNotValid(giftCertificateDto);
+
         giftCertificateDto.setId(UUID.randomUUID());
         giftCertificateDto.setCreateDate(LocalDateTime.now());
         giftCertificateDto.setLastUpdateDate(LocalDateTime.now());
+
         GiftCertificate create = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
         if (create != null) {
             createTags(giftCertificateDto);
@@ -79,15 +78,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public BaseResponseDto update(GiftCertificateDto update, UUID certificateId) {
         if (!isUpdate(update))
             return new BaseResponseDto(204, "nothing to update");
-        if(isNotValid(update))
-            throw  new InvalidCertificateException(
-                    "duration should be greater than 0 and price should not be less than 0"
-            );
+        isNotValid(update);
+
         GiftCertificate old = giftCertificateDAO.get(certificateId);
         update.setLastUpdateDate(LocalDateTime.now());
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         modelMapper.map(update, old);
-        GiftCertificate result = giftCertificateDAO.update(old);
+        GiftCertificate result = giftCertificateDAO.update(old, certificateId);
         if (result != null) {
             createTags(update);
             modelMapper.map(result, update);
@@ -123,10 +120,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 update.getTags() != null;
     }
 
-    boolean isNotValid(GiftCertificateDto giftCertificate){
+    void isNotValid(GiftCertificateDto giftCertificate){
         if(giftCertificate.getDuration() != null && giftCertificate.getDuration() <= 0)
-            return true;
-        return giftCertificate.getPrice() != null &&
-                giftCertificate.getPrice().compareTo(new BigDecimal(0)) == -1;
+            throw  new InvalidCertificateException(
+                    "duration should be greater than 0 and price should not be less than 0"
+            );
     }
 }
