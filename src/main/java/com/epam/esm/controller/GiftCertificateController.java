@@ -34,13 +34,13 @@ public class GiftCertificateController {
     @RequestMapping(value = "/get_all", method = RequestMethod.GET)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) String searchWord,
-            @RequestParam(required = false) String byTagName,
+            @RequestParam(required = false) String tagName,
             @RequestParam(required = false) boolean doNameSort,
             @RequestParam(required = false) boolean doDateSort,
             @RequestParam(required = false) boolean isDescending
     ){
         return ResponseEntity.ok(giftCertificateService.getAll(
-               searchWord, byTagName, doNameSort, doDateSort, isDescending
+               searchWord, tagName, doNameSort, doDateSort, isDescending
             ));
     }
 

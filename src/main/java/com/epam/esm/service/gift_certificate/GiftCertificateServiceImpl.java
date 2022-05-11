@@ -86,6 +86,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         modelMapper.map(update, old);
         GiftCertificate result = giftCertificateDAO.update(old, certificateId);
         if (result != null) {
+            update.setId(certificateId);
             createTags(update);
             modelMapper.map(result, update);
             update.setTags(tagDAO.getTags(update.getId()));
@@ -108,7 +109,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     void createTags(GiftCertificateDto giftCertificateDto) {
         if (giftCertificateDto.getTags() != null)
-
             tagDAO.createWithGiftCertificate(giftCertificateDto.getId(), giftCertificateDto.getTags());
     }
 
@@ -121,7 +121,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     void isNotValid(GiftCertificateDto giftCertificate){
-        if(giftCertificate.getDuration() != null && giftCertificate.getDuration() <= 0)
+        if((giftCertificate.getDuration() != null && giftCertificate.getDuration() <= 0) ||
+           (giftCertificate.getPrice() != null && giftCertificate.getPrice().compareTo(new BigDecimal(0)) == - 1))
             throw  new InvalidCertificateException(
                     "duration should be greater than 0 and price should not be less than 0"
             );
